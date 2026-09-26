@@ -8,22 +8,42 @@ Full design and module documentation lives in [`docs/ARCHITECTURE.md`](docs/ARCH
 
 ## Quick start
 
+**Prerequisites:** Python 3.11+ and pip. No database account, no `.env` and no
+configuration are required to run it — the system falls back to a local
+SQLite file until you point it at Supabase.
+
 ```bash
-cd "Desktop/Y2SEM1/DSA PARKING SYST"
+git clone https://github.com/muuo808/DSA-PARKING-SYSTEM.git
+cd DSA-PARKING-SYSTEM
 
-# 1. Environment (already created)
+# 1. Virtual environment + dependencies
+python3 -m venv .venv
 source .venv/bin/activate
+pip install -r requirements.txt
 
-# 2. Configure the database (Supabase URI) - optional for local bootstrap
-cp .env.example .env        # then edit DATABASE_URL
+# 2. Create the tables and the demo data (users + 12 slots)
+python manage.py migrate
+python manage.py seed_demo
 
 # 3. Run everything (Django :8000, fee :5000, barrier :5001)
 ./run_dev.sh
 ```
 
-Open http://127.0.0.1:8000 and sign in.
+Open http://127.0.0.1:8000 and sign in with a demo account below.
+Public slot display (no login): http://127.0.0.1:8000/display
+
+### Optional — use Supabase PostgreSQL
+
+```bash
+cp .env.example .env     # paste your DATABASE_URL (and a secret key)
+python manage.py migrate # apply the schema to Supabase instead
+python manage.py seed_demo
+```
 
 ### Demo accounts
+
+Created by `python manage.py seed_demo` (run it again with
+`--reset-passwords` if you ever want the documented passwords back).
 
 | Username | Password | Role | Access |
 | --- | --- | --- | --- |
@@ -78,6 +98,7 @@ smartpark/
 | Create migrations | `python manage.py makemigrations` |
 | Apply migrations | `python manage.py migrate` |
 | Seed demo slots | `python manage.py seed_slots --count 12 --prefix A` |
+| Seed demo users + slots (fresh clone) | `python manage.py seed_demo` |
 | Django admin | http://127.0.0.1:8000/admin/ |
 | System check | `python manage.py check` |
 

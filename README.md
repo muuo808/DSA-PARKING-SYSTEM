@@ -61,7 +61,7 @@ smartpark/
 ├── static/css/smartpark.css    # Design system - flat UI, brand palette
 ├── static/vendor/              # Bootstrap 5, Chart.js (vendored, offline)
 ├── tests/                      # Unit tests (Django + Flask)
-├── docs/                       # Architecture documentation
+├── docs/                       # USE_CASES.md + ARCHITECTURE.md
 ├── docker/                     # Dockerfile + compose (web + fee + barrier)
 ├── run_dev.sh                  # Starts all three services
 ├── requirements.txt
@@ -91,12 +91,19 @@ smartpark/
 | `/parking/exit/` | Search plate, quote fee, take payment |
 | `/reports/` | Module 9: KPIs, 14-day revenue, occupancy, session ledger (admin) |
 | `/reports/export/` | Session ledger CSV download (admin) |
-| `/display/` | Public availability screen (auto-refresh 10s) |
+| `/display/` | Public slot map + counters for drivers, no login (auto-refresh 10s) |
 | `/accounts/login/` | Sign in |
 | `/admin/` | Django admin |
 | `/api/v1/` | API descriptor |
 | `:5000/api/calculate-fee` | Flask fee service |
 | `:5001/api/barrier/open` | Flask barrier service |
+
+## Documentation
+
+| Document | Contents |
+| --- | --- |
+| `docs/USE_CASES.md` | Actors, 10 use cases (UC-01 … UC-10) with flows, each mapped to its module, code path and tests |
+| `docs/ARCHITECTURE.md` | Stack, database schema + ER diagram, **algorithms** (fee brackets, slot allocation, plate normalisation, atomic exit), REST standards, security, module status |
 
 ## Testing
 
@@ -104,12 +111,13 @@ smartpark/
 python manage.py test tests
 ```
 
-60 tests covering: fee calculation (all 5 charge brackets + boundaries),
+70 tests covering: fee calculation (all 5 charge brackets + boundaries),
 plate normalisation, slot allocation, occupancy counts, vehicle/session rules,
 payment status, role flags, password hashing, barrier simulation, the Flask
 HTTP contracts, full entry -> exit -> payment lifecycle flows, report
 aggregations (revenue/occupancy KPIs), the CSV session export, RBAC on the
-reports screens and the 7-day dashboard trend series.
+reports screens, the 7-day dashboard trend series and the public display
+(anonymous access, slot map states, order, counts, auto refresh).
 
 ## Database
 

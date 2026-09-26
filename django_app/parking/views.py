@@ -187,6 +187,8 @@ def vehicle_exit(request: HttpRequest) -> HttpResponse:
                 f"{session.vehicle.plate_number} ({session.duration_minutes} min, "
                 f"slot {session.slot.slot_number} released)"
             )
+            # Payment is committed and the slot is free - only now does the
+            # barrier open (the brief: open "on the payment of parking fees").
             gate_ok, gate_detail = open_gate()
             if gate_ok:
                 messages.success(request, f"{summary}. Barrier OPEN.")

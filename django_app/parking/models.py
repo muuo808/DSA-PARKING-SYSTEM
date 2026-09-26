@@ -108,10 +108,14 @@ class ParkingSession(models.Model):
         on_delete=models.PROTECT,
         related_name="sessions",
     )
+    # The brief: "records vehicles on arrival" - this timestamp is the start
+    # of every fee calculation (algorithm A1 measures from here).
     entry_time = models.DateTimeField(default=timezone.now)
+    # Set once, at exit, together with duration_minutes and amount_paid.
     exit_time = models.DateTimeField(null=True, blank=True)
     duration_minutes = models.PositiveIntegerField(null=True, blank=True)
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    # ACTIVE -> COMPLETED is a one-way transition handled by register_exit.
     status = models.CharField(
         max_length=20,
         choices=SessionStatus.choices,

@@ -29,6 +29,31 @@
       </div>
     </div>
 
+    <!-- UC-01: the slot map itself - which bays are free, before entry -->
+    <h2 class="display-section-title">Parking slots</h2>
+    <div class="slot-map">
+      {% for slot in slots %}
+      <div class="slot-tile is-{{ slot.status|lower }}">
+        <span class="slot-tile-number">{{ slot.slot_number }}</span>
+        <span class="slot-tile-state">
+          {% if slot.status == 'AVAILABLE' %}FREE
+          {% elif slot.status == 'OCCUPIED' %}TAKEN
+          {% elif slot.status == 'RESERVED' %}RESERVED
+          {% else %}CLOSED{% endif %}
+        </span>
+      </div>
+      {% empty %}
+      <p class="display-empty">No slots registered yet</p>
+      {% endfor %}
+    </div>
+
+    <div class="display-legend">
+      <span class="legend-chip"><i class="legend-dot is-available"></i>Free</span>
+      <span class="legend-chip"><i class="legend-dot is-occupied"></i>Taken</span>
+      <span class="legend-chip"><i class="legend-dot is-reserved"></i>Reserved</span>
+      <span class="legend-chip"><i class="legend-dot is-out_of_service"></i>Closed</span>
+    </div>
+
     <p class="mt-5 mb-0" style="color:var(--sp-muted); font-size:1rem; letter-spacing:0.08em;">
       REFRESHES EVERY {{ refresh_seconds }} SECONDS
     </p>

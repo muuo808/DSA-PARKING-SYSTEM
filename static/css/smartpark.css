@@ -254,6 +254,30 @@ a:hover { color: var(--sp-secondary); text-decoration: underline; }
 .display-number { font-size: clamp(4rem, 12vw, 8rem); font-weight: 750; letter-spacing: -0.04em; line-height: 1; }
 .display-label { font-size: clamp(1rem, 2.5vw, 1.5rem); text-transform: uppercase; letter-spacing: 0.12em; color: var(--sp-muted); margin-top: 0.75rem; }
 
+/* Slot map on the public display (Module 10 / UC-01): one flat tile per bay,
+   sized for an LED screen at the gate. No gradients, no animation. */
+.display-section-title { font-size: clamp(1.1rem, 2.6vw, 1.6rem); font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--sp-muted); margin: 3rem 0 1.25rem; }
+.slot-map { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.875rem; max-width: 1100px; margin: 0 auto; }
+.slot-tile { border: 1px solid var(--sp-border); border-radius: var(--sp-radius); padding: 1rem 0.5rem 0.875rem; text-align: center; }
+.slot-tile-number { display: block; font-size: clamp(1.5rem, 3.2vw, 2.25rem); font-weight: 750; letter-spacing: -0.02em; line-height: 1; }
+.slot-tile-state { display: block; margin-top: 0.5rem; font-size: 0.75rem; font-weight: 650; letter-spacing: 0.1em; }
+.slot-tile.is-available { background: #DCFCE7; border-color: #16A34A; }
+.slot-tile.is-available .slot-tile-number, .slot-tile.is-available .slot-tile-state { color: #14532D; }
+.slot-tile.is-occupied { background: var(--sp-ink); border-color: var(--sp-ink); }
+.slot-tile.is-occupied .slot-tile-number, .slot-tile.is-occupied .slot-tile-state { color: var(--sp-white); }
+.slot-tile.is-reserved { background: #FEF3C7; border-color: #D97706; }
+.slot-tile.is-reserved .slot-tile-number, .slot-tile.is-reserved .slot-tile-state { color: #78350F; }
+.slot-tile.is-out_of_service { background: #F3F4F6; border-color: #9CA3AF; border-style: dashed; }
+.slot-tile.is-out_of_service .slot-tile-number, .slot-tile.is-out_of_service .slot-tile-state { color: #6B7280; }
+.display-empty { grid-column: 1 / -1; color: var(--sp-muted); font-size: 1.125rem; }
+.display-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin-top: 1.5rem; }
+.legend-chip { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9375rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--sp-muted); }
+.legend-dot { width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--sp-border); }
+.legend-dot.is-available { background: #DCFCE7; border-color: #16A34A; }
+.legend-dot.is-occupied { background: var(--sp-ink); border-color: var(--sp-ink); }
+.legend-dot.is-reserved { background: #FEF3C7; border-color: #D97706; }
+.legend-dot.is-out_of_service { background: #F3F4F6; border-color: #9CA3AF; }
+
 /* ------------------------------------------------------------ Responsive */
 
 @media (max-width: 991.98px) {

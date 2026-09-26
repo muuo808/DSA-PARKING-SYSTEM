@@ -23,8 +23,11 @@ def allocate_slot() -> ParkingSlot | None:
         if connection.features.has_select_for_update:
             candidates = candidates.select_for_update()
 
+        # Ordered first-fit: A01, A02, ... so allocation is deterministic and
+        # the public display map reads in the same order.
         slot = candidates.first()
         if slot is None:
+            # Caller converts this into ParkingLotFullError.
             return None
 
         slot.status = SlotStatus.OCCUPIED
@@ -39,6 +42,9 @@ def release_slot(slot: ParkingSlot) -> ParkingSlot:
     Slots that are RESERVED or OUT_OF_SERVICE are left untouched - only
     an attendant/admin changes those states.
     """
+    # Mirror of A2: only OCCUPIED -> AVAILABLE happens here. RESERVED and
+    # OUT_OF_SERVICE are deliberately left alone - those states are set by
+    # an admin, not by a car driving away.
     with transaction.atomic():
         locked = ParkingSlot.objects.get(pk=slot.pk)
         if connection.features.has_select_for_update:

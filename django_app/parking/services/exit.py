@@ -70,8 +70,8 @@ def register_exit(
 
     exit_time = timezone.now()
 
-    # Step 3 + 4: duration and fee are computed BEFORE any write, so a
-    # down fee service leaves the database untouched.
+    # Fail closed (A4): duration and fee are computed BEFORE any write, so a
+    # down fee service leaves the database untouched - no payment, no exit.
     duration_minutes = int((exit_time - session.entry_time).total_seconds() // 60)
     _duration, fee = calculate_fee(session.entry_time, exit_time)
     if _duration != duration_minutes:
@@ -80,6 +80,8 @@ def register_exit(
     if payment_method not in PaymentMethod.values:
         raise ValueError(f"Invalid payment method: {payment_method!r}")
 
+    # One transaction: payment + exit + slot release land together or not at
+    # all. The row lock stops two attendants completing the same session.
     with transaction.atomic():
         locked = ParkingSession.objects.select_for_update().get(pk=session.pk) \
             if connection.features.has_select_for_update else session
@@ -107,4 +109,8 @@ def register_exit(
 
         release_slot(locked.slot)
 
+    # Everything is committed here. The caller (the exit view) issues the
+    # barrier OPEN command only after this returns - the brief requires the
+    # barrier to open *on payment*, and a hardware side effect must never be
+    # rolled back (see ARCHITECTURE.md -> Algorithms -> A4).
     return locked, payment

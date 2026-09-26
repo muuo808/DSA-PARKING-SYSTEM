@@ -34,7 +34,7 @@ def register_entry(
         VehicleAlreadyParkedError – vehicle already inside
         ParkingLotFullError       – no slot available (step 2 display)
     """
-    plate = normalise_plate(plate_number)
+    plate = normalise_plate(plate_number)  # UC-02: KDA 123X == KDA123X (A3)
     if not plate:
         raise ValueError("Plate number is required.")
 
@@ -44,6 +44,8 @@ def register_entry(
             defaults={"vehicle_type": vehicle_type},
         )
 
+        # Duplicate-entry guard: one ACTIVE session per vehicle, so a car
+        # cannot occupy two slots or be counted twice in the statistics.
         already_parked = ParkingSession.objects.filter(
             vehicle=vehicle, status=SessionStatus.ACTIVE
         ).exists()
@@ -52,6 +54,8 @@ def register_entry(
                 f"{vehicle.plate_number} already has an active session."
             )
 
+        # First-fit under a row lock (algorithm A2); None means the lot is
+        # full, which the view surfaces as a message rather than a crash.
         slot = allocate_slot()
         if slot is None:
             raise ParkingLotFullError("No parking slot is currently available.")

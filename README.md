@@ -61,7 +61,7 @@ smartpark/
 ├── static/css/smartpark.css    # Design system - flat UI, brand palette
 ├── static/vendor/              # Bootstrap 5, Chart.js (vendored, offline)
 ├── tests/                      # Unit tests (Django + Flask)
-├── docs/                       # USE_CASES.md + ARCHITECTURE.md
+├── docs/                       # DESIGN.md, USE_CASES.md, ARCHITECTURE.md
 ├── docker/                     # Dockerfile + compose (web + fee + barrier)
 ├── run_dev.sh                  # Starts all three services
 ├── requirements.txt
@@ -103,6 +103,7 @@ smartpark/
 | Document | Contents |
 | --- | --- |
 | `docs/USE_CASES.md` | Actors, 10 use cases (UC-01 … UC-10) with flows, each mapped to its module, code path and tests |
+| `docs/DESIGN.md` | **(a)** algorithm per module · **(b)** data structures + why each was chosen · **(c)** dynamic database design (ER, integrity guarantees, runtime evolution) |
 | `docs/ARCHITECTURE.md` | Stack, database schema + ER diagram, **algorithms** (fee brackets, slot allocation, plate normalisation, atomic exit), REST standards, security, module status |
 
 ## Testing

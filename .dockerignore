@@ -1,0 +1,19 @@
+# Keep the image small and free of secrets (build context = project root)
+.venv/
+venv/
+env/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+.git/
+.gitignore
+.env
+db.sqlite3
+*.sqlite3
+media/
+static/CACHE/
+staticfiles/
+*.log
+.pytest_cache/
+.DS_Store
+tests/__pycache__/

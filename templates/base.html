@@ -1,0 +1,85 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ page_title|default:"SmartPark Kenya" }}{% endblock %} · SmartPark Kenya</title>
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/smartpark.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+{% if user.is_authenticated %}
+<div class="sp-shell">
+
+  <!-- Sidebar -->
+  <aside class="sp-sidebar">
+    <div class="sp-brand">
+      <span class="sp-brand-mark">SP</span>
+      <span>
+        <span class="sp-brand-name">SmartPark Kenya</span>
+        <span class="sp-brand-sub">Parking Management</span>
+      </span>
+    </div>
+
+    <nav class="sp-nav">
+      <div class="sp-nav-section">Operations</div>
+      <a class="sp-nav-link{% if request.resolver_match.app_name == 'dashboard' %} active{% endif %}"
+         href="{% url 'dashboard:home' %}">Dashboard</a>
+      <a class="sp-nav-link{% if request.resolver_match.url_name == 'entry' %} active{% endif %}"
+         href="{% url 'parking:entry' %}">Vehicle Entry</a>
+      <a class="sp-nav-link{% if request.resolver_match.url_name == 'exit' %} active{% endif %}"
+         href="{% url 'parking:exit' %}">Vehicle Exit</a>
+      <a class="sp-nav-link{% if request.resolver_match.url_name == 'slot_list' %} active{% endif %}"
+         href="{% url 'parking:slot_list' %}">Parking Slots</a>
+
+      {% if user.is_admin_role %}
+      <div class="sp-nav-section">Administration</div>
+      <a class="sp-nav-link{% if request.resolver_match.app_name == 'reports' %} active{% endif %}"
+         href="{% url 'reports:index' %}">Reports</a>
+      <a class="sp-nav-link" href="{% url 'admin:index' %}">Django Admin</a>
+      {% endif %}
+    </nav>
+  </aside>
+
+  <!-- Main column -->
+  <div class="sp-main">
+    <header class="sp-topbar">
+      <div>
+        <h1 class="sp-page-title">{% block page_title %}{{ page_title|default:"SmartPark Kenya" }}{% endblock %}</h1>
+        {% block page_subtitle %}<p class="sp-page-sub">{% block subtitle %}{% endblock %}</p>{% endblock %}
+      </div>
+
+      <div class="sp-user">
+        <div class="text-end d-none d-sm-block">
+          <div class="sp-user-name">{{ user.get_full_name|default:user.username }}</div>
+          <div class="sp-user-role">{{ user.get_role_display }}</div>
+        </div>
+        <span class="sp-avatar" aria-hidden="true">{{ user.username|slice:":2"|upper }}</span>
+        <form method="post" action="{% url 'accounts:logout' %}" class="m-0">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-secondary btn-sm">Log out</button>
+        </form>
+      </div>
+    </header>
+
+    <main class="sp-content">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="sp-alert sp-alert-{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% else %}info{% endif %}"
+               role="alert">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% else %}
+  {% block anonymous %}{% endblock %}
+{% endif %}
+
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

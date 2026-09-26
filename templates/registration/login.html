@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Sign in{% endblock %}
+
+{% block anonymous %}
+<div class="sp-auth-wrap">
+  <div class="sp-auth-card">
+    <div class="sp-brand" style="border-bottom:0; margin-bottom:1.25rem; padding:0;">
+      <span class="sp-brand-mark">SP</span>
+      <span>
+        <span class="sp-brand-name">SmartPark Kenya</span>
+        <span class="sp-brand-sub">Parking Management System</span>
+      </span>
+    </div>
+
+    {% if form.errors %}
+      <div class="sp-alert sp-alert-error" role="alert">
+        Invalid username or password. Please try again.
+      </div>
+    {% endif %}
+
+    {% if next and user.is_authenticated %}
+      <div class="sp-alert sp-alert-error" role="alert">
+        Your account does not have access to this page.
+      </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'accounts:login' %}">
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label class="form-label" for="id_username">Username</label>
+        <input type="text" name="username" id="id_username" class="form-control"
+               autofocus autocomplete="username" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="id_password">Password</label>
+        <input type="password" name="password" id="id_password" class="form-control"
+               autocomplete="current-password" required>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <a href="{% url 'accounts:password_reset' %}" style="font-size:0.8125rem;">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">Sign in</button>
+      <input type="hidden" name="next" value="{{ next }}">
+    </form>
+  </div>
+</div>
+{% endblock %}

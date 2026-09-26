@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block subtitle %}{{ stats.available }} of {{ stats.total_slots }} slots available right now{% endblock %}
+
+{% block content %}
+<!-- Availability shown BEFORE entry (Module 3 workflow step 2) -->
+<div class="sp-stats mb-4">
+  <div class="stat-card">
+    <div class="stat-label">Available</div>
+    <div class="stat-value" style="color:var(--sp-primary);">{{ stats.available }}</div>
+    <div class="stat-note">of {{ stats.total_slots }} slots</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Occupied</div>
+    <div class="stat-value">{{ stats.occupied }}</div>
+    <div class="stat-note">{{ stats.reserved }} reserved</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Out of service</div>
+    <div class="stat-value">{{ stats.out_of_service }}</div>
+    <div class="stat-note">not assignable</div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Entry form -->
+  <div class="col-lg-5">
+    <div class="sp-card">
+      <p class="sp-card-title">Register vehicle arrival</p>
+
+      <form method="post" action="{% url 'parking:entry' %}">
+        {% csrf_token %}
+
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.plate_number.id_for_label }}">Number plate</label>
+          {{ form.plate_number }}
+          {% if form.plate_number.errors %}
+            <div class="text-danger" style="font-size:0.8125rem;">{{ form.plate_number.errors|striptags }}</div>
+          {% endif %}
+          <div class="form-text">Enter the plate exactly as it appears; we normalise it to upper case.</div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label" for="{{ form.vehicle_type.id_for_label }}">Vehicle type</label>
+          {{ form.vehicle_type }}
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100"
+                {% if stats.available == 0 %}disabled{% endif %}>
+          {% if stats.available == 0 %}Lot full - no slot available{% else %}Allocate slot &amp; open barrier{% endif %}
+        </button>
+      </form>
+
+      <p class="mb-0 mt-3" style="font-size:0.75rem; color:var(--sp-muted);">
+        Allocates the lowest available slot, records the session, then sends
+        <code>OPEN</code> to the barrier service.
+      </p>
+    </div>
+  </div>
+
+  <!-- Recent entries -->
+  <div class="col-lg-7">
+    <div class="sp-card p-0">
+      <div class="px-3 py-2" style="border-bottom:1px solid var(--sp-border);">
+        <p class="sp-card-title m-0">Entries today</p>
+      </div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Plate</th>
+              <th>Type</th>
+              <th>Slot</th>
+              <th>Entry time</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for session in recent_entries %}
+            <tr>
+              <td><strong class="sp-tnum">{{ session.vehicle.plate_number }}</strong></td>
+              <td>{{ session.vehicle.get_vehicle_type_display }}</td>
+              <td>{{ session.slot.slot_number }}</td>
+              <td class="sp-tnum">{{ session.entry_time|date:"H:i" }}</td>
+              <td>
+                {% if session.status == 'ACTIVE' %}
+                  <span class="badge" style="background:#DBEAFE; color:#1E40AF;">Parked</span>
+                {% else %}
+                  <span class="badge" style="background:#DCFCE7; color:#166534;">Exited</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" style="text-align:center; padding:2rem; color:var(--sp-muted);">
+                No vehicles recorded today yet.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

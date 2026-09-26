@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block subtitle %}{{ stats.total_slots }} slots registered · {{ stats.available }} available right now{% endblock %}
+
+{% block content %}
+<!-- Occupancy summary -->
+<div class="sp-stats mb-4">
+  <div class="stat-card">
+    <div class="stat-label">Total Slots</div>
+    <div class="stat-value">{{ stats.total_slots }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Occupied</div>
+    <div class="stat-value">{{ stats.occupied }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Available</div>
+    <div class="stat-value">{{ stats.available }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Reserved / Out of service</div>
+    <div class="stat-value">{{ stats.reserved }} / {{ stats.out_of_service }}</div>
+  </div>
+</div>
+
+{% if can_manage %}
+<!-- Create slot (admin only) -->
+<div class="sp-card mb-4">
+  <p class="sp-card-title">Create parking slot</p>
+  <form method="post" action="{% url 'parking:slot_create' %}" class="row g-2 align-items-end">
+    {% csrf_token %}
+    <div class="col-12 col-sm-4 col-lg-3">
+      <label class="form-label" for="{{ form.slot_number.id_for_label }}">Slot number</label>
+      {{ form.slot_number }}
+      {% if form.slot_number.errors %}
+        <div class="text-danger" style="font-size:0.8125rem;">{{ form.slot_number.errors|striptags }}</div>
+      {% endif %}
+    </div>
+    <div class="col-12 col-sm-4 col-lg-3">
+      <label class="form-label" for="{{ form.status.id_for_label }}">Status</label>
+      {{ form.status }}
+    </div>
+    <div class="col-12 col-sm-3 col-lg-2">
+      <button type="submit" class="btn btn-primary w-100">Add slot</button>
+    </div>
+  </form>
+</div>
+{% endif %}
+
+<!-- Slot table -->
+<div class="sp-card p-0">
+  <div class="d-flex justify-content-between align-items-center px-3 py-2" style="border-bottom:1px solid var(--sp-border);">
+    <p class="sp-card-title m-0">All slots</p>
+    <span style="font-size:0.75rem; color:var(--sp-muted);">Refreshes on page load</span>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Slot</th>
+          <th>Status</th>
+          <th>Current vehicle</th>
+          {% if can_manage %}<th style="text-align:right;">Manage{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for slot in slots %}
+        <tr>
+          <td><strong>{{ slot.slot_number }}</strong></td>
+          <td>
+            {% if slot.status == 'AVAILABLE' %}
+              <span class="badge" style="background:#DCFCE7; color:#166534;">Available</span>
+            {% elif slot.status == 'OCCUPIED' %}
+              <span class="badge" style="background:#DBEAFE; color:#1E40AF;">Occupied</span>
+            {% elif slot.status == 'RESERVED' %}
+              <span class="badge" style="background:#FEF3C7; color:#92400E;">Reserved</span>
+            {% else %}
+              <span class="badge" style="background:#E5E7EB; color:#374151;">Out of service</span>
+            {% endif %}
+          </td>
+          <td>
+            {% with active=slot.sessions|slice:":1" %}
+              {% if slot.status == 'OCCUPIED' and active %}
+                <span class="sp-tnum">{{ active.0.vehicle.plate_number }}</span>
+                <span style="font-size:0.75rem; color:var(--sp-muted);">· since {{ active.0.entry_time|date:"H:i" }}</span>
+              {% else %}—{% endif %}
+            {% endwith %}
+          </td>
+          {% if can_manage %}
+          <td style="text-align:right;">
+            <form method="post" action="{% url 'parking:slot_update_status' slot.pk %}"
+                  class="d-flex justify-content-end gap-2">
+              {% csrf_token %}
+              <select name="status" class="form-select form-select-sm" style="width:auto; font-size:0.8125rem;">
+                {% for value, label in status_choices %}
+                  <option value="{{ value }}" {% if slot.status == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+              <button type="submit" class="btn btn-outline-secondary btn-sm">Save</button>
+            </form>
+          </td>
+          {% endif %}
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" style="text-align:center; padding:2rem; color:var(--sp-muted);">
+            No parking slots yet.
+            {% if can_manage %}Create the first one above.{% else %}Ask an admin to create some.{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

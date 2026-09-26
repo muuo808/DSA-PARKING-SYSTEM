@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block subtitle %}Live overview of the car park · {{ "now"|date:"D j F Y" }}{% endblock %}
+
+{% block content %}
+<div class="sp-stats mb-4">
+  <div class="stat-card">
+    <div class="stat-label">Total Slots</div>
+    <div class="stat-value">{{ stats.total_slots }}</div>
+    <div class="stat-note">Registered spaces</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Occupied</div>
+    <div class="stat-value">{{ stats.occupied }}</div>
+    <div class="stat-note">{{ stats.available }} still available</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Available</div>
+    <div class="stat-value">{{ stats.available }}</div>
+    <div class="stat-note">{{ stats.out_of_service }} out of service</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Vehicles Today</div>
+    <div class="stat-value">{{ stats.vehicles_today }}</div>
+    <div class="stat-note">{{ stats.exits_today }} exits recorded</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Revenue Today</div>
+    <div class="stat-value is-money">{{ stats.revenue_today|floatformat:0 }}</div>
+    <div class="stat-note">Payments settled today</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Revenue This Month</div>
+    <div class="stat-value is-money">{{ stats.revenue_month|floatformat:0 }}</div>
+    <div class="stat-note">Payments settled this month</div>
+  </div>
+</div>
+
+<div class="sp-card">
+  <p class="sp-card-title">Quick actions</p>
+  <div class="d-flex flex-wrap gap-2">
+    <a class="btn btn-primary" href="{% url 'parking:entry' %}">Register entry</a>
+    <a class="btn btn-primary" href="{% url 'parking:exit' %}">Register exit</a>
+    <a class="btn btn-outline-secondary" href="{% url 'parking:slot_list' %}">Manage parking slots</a>
+    <a class="btn btn-outline-secondary" href="/admin/">Open admin panel</a>
+  </div>
+  <p class="mb-0 mt-3" style="font-size:0.8125rem; color:var(--sp-muted);">
+    Trends update on every page load{% if user.is_admin_role %} · detailed analytics live in
+    <a href="{% url 'reports:index' %}">Reports</a>{% endif %}.
+  </p>
+</div>
+
+<!-- Module 8: 7-day trend chart -->
+<div class="sp-card mt-4">
+  <div class="d-flex justify-content-between align-items-center">
+    <p class="sp-card-title m-0">Last 7 days</p>
+    <span style="font-size:0.75rem; color:var(--sp-muted);">entries · exits · revenue</span>
+  </div>
+  <canvas id="trendChart" height="110"></canvas>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'vendor/chartjs/chart.umd.min.js' %}"></script>
+{{ trend|json_script:"trend-data" }}
+<script>
+  (function () {
+    const data = JSON.parse(document.getElementById("trend-data").textContent);
+    const css = getComputedStyle(document.documentElement);
+    const primary = css.getPropertyValue("--sp-primary").trim() || "#1565C0";
+
+    new Chart(document.getElementById("trendChart"), {
+      type: "bar",
+      data: {
+        labels: data.map(d => d.label),
+        datasets: [
+          { label: "Entries", data: data.map(d => d.entries), backgroundColor: primary, borderRadius: 4 },
+          { label: "Exits", data: data.map(d => d.exits), backgroundColor: "#94A3B8", borderRadius: 4 },
+          { label: "Revenue (KES)", data: data.map(d => d.revenue), type: "line",
+            borderColor: "#10B981", backgroundColor: "#10B981", tension: 0.3, yAxisID: "money" }
+        ]
+      },
+      options: {
+        plugins: { legend: { position: "bottom" } },
+        scales: {
+          y: { beginAtZero: true, ticks: { precision: 0 } },
+          money: { position: "right", beginAtZero: true,
+                   grid: { drawOnChartArea: false }, ticks: { precision: 0 } }
+        }
+      }
+    });
+  })();
+</script>
+{% endblock %}

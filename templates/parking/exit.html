@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block subtitle %}Search the plate, settle the fee, release the slot{% endblock %}
+
+{% block content %}
+<!-- Step 1-2: search plate / retrieve session -->
+<div class="sp-card mb-4">
+  <p class="sp-card-title">Find parking session</p>
+  <form method="get" action="{% url 'parking:exit' %}" class="row g-2">
+    <div class="col-12 col-sm-6 col-lg-4">
+      <input type="text" name="plate" value="{{ plate_query }}"
+             class="form-control" placeholder="Number plate e.g. KDA 123X"
+             autocomplete="off" autofocus>
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+  </form>
+</div>
+
+{% if session %}
+<!-- Session detail + fee quote + payment -->
+<div class="row g-4 mb-4">
+  <div class="col-lg-6">
+    <div class="sp-card">
+      <p class="sp-card-title">Parking session #{{ session.pk }}</p>
+
+      <div class="row mb-3">
+        <div class="col-6">
+          <div class="stat-label">Vehicle</div>
+          <div class="sp-tnum" style="font-size:1.125rem; font-weight:650;">{{ session.vehicle.plate_number }}</div>
+          <div style="font-size:0.8125rem; color:var(--sp-muted);">{{ session.vehicle.get_vehicle_type_display }}</div>
+        </div>
+        <div class="col-6">
+          <div class="stat-label">Slot</div>
+          <div style="font-size:1.125rem; font-weight:650;">{{ session.slot.slot_number }}</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <div class="stat-label">Entry time</div>
+          <div class="sp-tnum">{{ session.entry_time|date:"D j M, H:i" }}</div>
+        </div>
+        <div class="col-6">
+          <div class="stat-label">Duration so far</div>
+          <div class="sp-tnum">{{ session.duration_minutes_so_far }} min</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="sp-card">
+      <p class="sp-card-title">Fee calculation</p>
+
+      {% if quote_error %}
+        <div class="sp-alert sp-alert-error" role="alert">{{ quote_error }}</div>
+      {% elif fee_quote %}
+        <div class="row align-items-center mb-3">
+          <div class="col-6">
+            <div class="stat-label">Duration</div>
+            <div class="sp-tnum" style="font-size:1.5rem; font-weight:680;">{{ fee_quote.0 }} min</div>
+          </div>
+          <div class="col-6">
+            <div class="stat-label">Amount due</div>
+            <div class="sp-tnum stat-value is-money" style="font-size:1.75rem;">{{ fee_quote.1|floatformat:0 }}</div>
+          </div>
+        </div>
+
+        <form method="post" action="{% url 'parking:exit' %}">
+          {% csrf_token %}
+          <input type="hidden" name="session_id" value="{{ session.pk }}">
+
+          <div class="mb-3">
+            <label class="form-label" for="id_payment_method">Payment method</label>
+            <select name="payment_method" id="id_payment_method" class="form-select">
+              {% for value, label in payment_methods %}
+                <option value="{{ value }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100">
+            Process payment &amp; open barrier
+          </button>
+        </form>
+
+        <p class="mb-0 mt-3" style="font-size:0.75rem; color:var(--sp-muted);">
+          Payment is recorded, the session closed, the slot released and
+          <code>OPEN</code> sent to the barrier.
+        </p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% elif plate_query %}
+<div class="sp-alert sp-alert-info">
+  Nothing parked under <strong>{{ plate_query|upper }}</strong>.
+  <a href="{% url 'parking:entry' %}">Register an arrival</a> instead.
+</div>
+{% endif %}
+
+<!-- Active sessions -->
+<div class="sp-card p-0">
+  <div class="px-3 py-2" style="border-bottom:1px solid var(--sp-border);">
+    <p class="sp-card-title m-0">Active sessions</p>
+  </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Plate</th>
+          <th>Slot</th>
+          <th>Entry</th>
+          <th>Parked for</th>
+          <th style="text-align:right;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in active_sessions %}
+        <tr>
+          <td><strong class="sp-tnum">{{ item.vehicle.plate_number }}</strong></td>
+          <td>{{ item.slot.slot_number }}</td>
+          <td class="sp-tnum">{{ item.entry_time|date:"H:i" }}</td>
+          <td class="sp-tnum">{{ item.duration_minutes_so_far }} min</td>
+          <td style="text-align:right;">
+            <a class="btn btn-outline-secondary btn-sm"
+               href="{% url 'parking:exit' %}?plate={{ item.vehicle.plate_number|urlencode }}">Select</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="text-align:center; padding:1.5rem; color:var(--sp-muted);">
+            No active sessions.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

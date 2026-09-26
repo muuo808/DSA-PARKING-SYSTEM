@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block subtitle %}Revenue, occupancy and session ledger · generated {{ generated_at|date:"D j F Y, H:i" }}{% endblock %}
+
+{% block content %}
+<!-- KPI cards -->
+<div class="sp-stats mb-4">
+  <div class="stat-card">
+    <div class="stat-label">Revenue (all time)</div>
+    <div class="stat-value is-money">{{ figures.revenue_total|floatformat:0 }}</div>
+    <div class="stat-note">{{ figures.payments_total }} settled payments</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Revenue this month</div>
+    <div class="stat-value is-money">{{ figures.revenue_month|floatformat:0 }}</div>
+    <div class="stat-note">KES</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Revenue today</div>
+    <div class="stat-value is-money">{{ figures.revenue_today|floatformat:0 }}</div>
+    <div class="stat-note">KES</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Avg revenue / session</div>
+    <div class="stat-value is-money">{{ figures.revenue_per_session|floatformat:0 }}</div>
+    <div class="stat-note">completed sessions</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Sessions</div>
+    <div class="stat-value">{{ figures.sessions_total }}</div>
+    <div class="stat-note">{{ figures.sessions_today }} started today</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Active now</div>
+    <div class="stat-value">{{ figures.sessions_active }}</div>
+    <div class="stat-note">{{ figures.sessions_completed }} completed</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Avg duration</div>
+    <div class="stat-value">{{ figures.average_duration }}</div>
+    <div class="stat-note">minutes per completed stay</div>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <!-- Revenue trend -->
+  <div class="col-12 col-lg-8">
+    <div class="sp-card h-100">
+      <div class="d-flex justify-content-between align-items-center">
+        <p class="sp-card-title m-0">Revenue — last 14 days</p>
+        <span style="font-size:0.75rem; color:var(--sp-muted);">KES per day</span>
+      </div>
+      <canvas id="revenueTrend" height="120"></canvas>
+    </div>
+  </div>
+
+  <!-- Revenue by method -->
+  <div class="col-12 col-lg-4">
+    <div class="sp-card h-100">
+      <p class="sp-card-title">By payment method</p>
+      {% if methods %}
+      <canvas id="methodSplit" height="160"></canvas>
+      <table class="table mt-2 mb-0">
+        <tbody>
+          {% for m in methods %}
+          <tr>
+            <td>{{ m.label }}</td>
+            <td style="text-align:right;">{{ m.count }}</td>
+            <td style="text-align:right;"><strong>KES {{ m.total|floatformat:0 }}</strong></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="mb-0" style="font-size:0.8125rem; color:var(--sp-muted);">No settled payments yet.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <!-- Occupancy breakdown -->
+  <div class="col-12 col-md-5 col-lg-4">
+    <div class="sp-card h-100">
+      <p class="sp-card-title">Slot occupancy</p>
+      {% for row in occupancy %}
+      <div class="mb-2">
+        <div class="d-flex justify-content-between" style="font-size:0.8125rem;">
+          <span>{{ row.label }}</span>
+          <span><strong>{{ row.count }}</strong> · {{ row.percent }}%</span>
+        </div>
+        <div style="height:6px; background:var(--sp-border); border-radius:3px; overflow:hidden;">
+          <div style="height:100%; width:{{ row.percent }}%; background:var(--sp-primary);"></div>
+        </div>
+      </div>
+      {% empty %}
+      <p class="mb-0" style="font-size:0.8125rem; color:var(--sp-muted);">No slots registered yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Session ledger -->
+  <div class="col-12 col-md-7 col-lg-8">
+    <div class="sp-card h-100 p-0">
+      <div class="d-flex justify-content-between align-items-center px-3 py-2" style="border-bottom:1px solid var(--sp-border);">
+        <p class="sp-card-title m-0">Recent sessions</p>
+        <a class="btn btn-outline-secondary btn-sm" href="{% url 'reports:export' %}">Export CSV</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead>
+            <tr>
+              <th>Plate</th>
+              <th>Slot</th>
+              <th>Entry</th>
+              <th>Exit</th>
+              <th style="text-align:right;">Min</th>
+              <th style="text-align:right;">KES</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in sessions %}
+            <tr>
+              <td><strong>{{ s.vehicle.plate_number }}</strong></td>
+              <td>{{ s.slot.slot_number }}</td>
+              <td>{{ s.entry_time|date:"d M, H:i" }}</td>
+              <td>{% if s.exit_time %}{{ s.exit_time|date:"d M, H:i" }}{% else %}—{% endif %}</td>
+              <td style="text-align:right;">{{ s.duration_minutes|default_if_none:"—" }}</td>
+              <td style="text-align:right;">{{ s.amount_paid|floatformat:0 }}</td>
+              <td>
+                {% if s.status == 'COMPLETED' %}
+                  <span class="badge" style="background:#DCFCE7; color:#166534;">Completed</span>
+                {% elif s.status == 'ACTIVE' %}
+                  <span class="badge" style="background:#DBEAFE; color:#1E40AF;">Active</span>
+                {% else %}
+                  <span class="badge" style="background:#E5E7EB; color:#374151;">{{ s.get_status_display }}</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7" style="text-align:center; color:var(--sp-muted);">No sessions recorded yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'vendor/chartjs/chart.umd.min.js' %}"></script>
+{{ series|json_script:"revenue-series" }}
+{{ methods|json_script:"method-split" }}
+<script>
+  (function () {
+    const series = JSON.parse(document.getElementById("revenue-series").textContent);
+    const methods = JSON.parse(document.getElementById("method-split").textContent);
+    const brand = getComputedStyle(document.documentElement).getPropertyValue("--sp-primary").trim() || "#1565C0";
+
+    new Chart(document.getElementById("revenueTrend"), {
+      type: "bar",
+      data: {
+        labels: series.map(d => d.label),
+        datasets: [{
+          label: "Revenue (KES)",
+          data: series.map(d => d.revenue),
+          backgroundColor: brand,
+          borderRadius: 4,
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+      }
+    });
+
+    if (methods.length) {
+      const palette = ["#3B82F6", "#10B981", "#F59E0B", "#EF4444"];
+      new Chart(document.getElementById("methodSplit"), {
+        type: "doughnut",
+        data: {
+          labels: methods.map(m => m.label),
+          datasets: [{
+            data: methods.map(m => m.total),
+            backgroundColor: palette,
+            borderWidth: 0,
+          }]
+        },
+        options: { plugins: { legend: { position: "bottom" } } }
+      });
+    }
+  })();
+</script>
+{% endblock %}

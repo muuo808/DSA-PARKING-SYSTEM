@@ -1,7 +1,5 @@
 # SmartPark Kenya — Algorithms, Data Structures & Dynamic Database Design
 
-Answers to the assignment, in three parts:
-
 - **(a)** An algorithm for each of the 10 modules, written as pseudocode that matches the shipped code
 - **(b)** The data structures used and *why each one was chosen*
 - **(c)** A dynamic database design — the schema, how it evolves at runtime, and what keeps it fast and safe

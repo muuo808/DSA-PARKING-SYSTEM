@@ -3,6 +3,8 @@
 Actors, use cases and the module / code / test each one maps to. This is the
 traceability sheet for the brief: *"Using the identified Use Cases, modules,
 algorithms and databases develop a functional Modern Parking System."*
+The ToR itself — requirements, ambiguities and the decisions taken →
+`CRITICAL_ANALYSIS.md`.
 
 ## Actors
 

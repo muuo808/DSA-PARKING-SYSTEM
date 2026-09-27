@@ -104,12 +104,34 @@ else:
         }
     }
 
-# Testing: disable the keep-alive so Supabase's pooler (Supavisor) releases
-# its server-side session the moment Django disconnects. With conn_max_age
-# still active, that lingering session blocks the `DROP DATABASE
-# test_postgres` that runs at the end of `manage.py test`
-# ("database is being accessed by other users").
+# Testing
+# -------
+# `manage.py test` is deliberately zero-config and offline: unless the
+# operator explicitly opts in, the run swaps in a local SQLite test database
+# (Django keeps it in memory) so that:
+#   * a fresh clone can run the suite with no database account and no network,
+#   * a test run can never write to the live Supabase database even when
+#     DATABASE_URL is configured, and
+#   * a stale `test_postgres` left behind by an interrupted run cannot stall
+#     the suite while it tries to drop it over the connection pooler.
+#
+# Opt in to the PostgreSQL path (exercises tests/runner.py's pooler-safe
+# teardown) with:
+#     TEST_USE_POSTGRES=1 python manage.py test tests
 if "test" in sys.argv:
+    use_postgres = os.environ.get("TEST_USE_POSTGRES", "").strip().lower()
+    if use_postgres not in {"1", "true", "yes"}:
+        DATABASES["default"] = {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",  # never opened: tests run in memory
+            "TEST": {"NAME": ":memory:"},
+        }
+
+    # Also disable the keep-alive so Supabase's pooler (Supavisor) releases its
+    # server-side session the moment Django disconnects. With conn_max_age
+    # still active, that lingering session blocks the `DROP DATABASE
+    # test_postgres` at the end of `manage.py test`
+    # ("database is being accessed by other users").
     DATABASES["default"]["CONN_MAX_AGE"] = 0
 
 # Custom runner: if the pooler still holds the test database open at teardown,

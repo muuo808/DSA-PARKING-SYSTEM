@@ -5,8 +5,8 @@
 - **(c)** A dynamic database design — the schema, how it evolves at runtime, and what keeps it fast and safe
 
 File references are live: every pseudocode block below is implemented at the
-path shown. Use-case mapping → `USE_CASES.md`; architecture overview →
-`ARCHITECTURE.md`.
+path shown. ToR reading → `CRITICAL_ANALYSIS.md`; use-case mapping →
+`USE_CASES.md`; architecture overview → `ARCHITECTURE.md`.
 
 ---
 
@@ -286,13 +286,20 @@ DISPLAY():                                      # UC-01, no login
 ### Cross-cutting: test-database lifecycle (dev-ops algorithm)
 
 ```
-SETUP:    CREATE DATABASE test_postgres → migrate → run tests
-TEARDOWN: DROP DATABASE test_postgres WITH (FORCE)   # via 'postgres' maint db
-          guard: refuse if name ∈ {postgres, template0, template1}
+SETUP:    if TEST_USE_POSTGRES is unset:   # the default
+              bind the test connection to an in-memory SQLite database
+          else:
+              CREATE DATABASE test_postgres → migrate → run tests
+TEARDOWN: drop the in-memory database, or
+              DROP DATABASE test_postgres WITH (FORCE)   # via 'postgres' maint db
+              guard: refuse if name ∈ {postgres, template0, template1}
 ```
 
-`WITH (FORCE)` terminates leftover pooler sessions so a dropped connection
-never blocks teardown — implemented in `tests/runner.py`.
+The default path is offline and zero-config: a test run can never touch the
+live Supabase data, and a stale `test_postgres` left by an interrupted run
+cannot stall the suite. `WITH (FORCE)` terminates leftover pooler sessions so
+a dropped connection never blocks the opt-in Postgres teardown — implemented
+in `tests/runner.py`.
 
 ---
 
@@ -394,7 +401,7 @@ the other way.
 | **Live state** | Slot `status` and session `status` mutate continuously (AVAILABLE→OCCUPIED→AVAILABLE; ACTIVE→COMPLETED). All screens read current state with aggregate queries — nothing is cached into stale columns. |
 | **Historical reporting** | `paid_at`/`entry_time` indexes + `GROUP BY` generate day/month series on demand, so any date range can be asked for without a pre-aggregated table. |
 | **Extensibility for M-Pesa STK** | `payment_status` already has `PENDING/FAILED` and the model reserves room for a `provider_reference` column: add the field by migration, insert `PENDING`, flip to `PAID` on callback — schema and code already anticipate it. |
-| **Elastic test environments** | The suite creates `test_postgres`, migrates it, and `DROP DATABASE … WITH (FORCE)` afterwards — a full, isolated database per run (guarded so it can never target a real one). |
+| **Elastic test environments** | By default the suite binds an in-memory SQLite database — isolated per run, offline, and structurally unable to reach the live data. With `TEST_USE_POSTGRES=1` it creates `test_postgres`, migrates it, and `DROP DATABASE … WITH (FORCE)` afterwards — a full, isolated PostgreSQL database per run (guarded so it can never target a real one). |
 | **Zero-downtime evolution** | Because every change is a migration, the running app and the new schema can coexist during deploy; additive columns (nullable/defaulted) are applied first, code second. |
 
 ## C.4 Data lifecycle (the dynamic flow)
@@ -448,5 +455,5 @@ bookkeeping.
 | M10 display | `django_app/dashboard/views.py`, `templates/dashboard/display.html` |
 | Schema & migrations | `django_app/*/migrations/`, config in `django_app/settings.py` |
 
-**Verification:** every algorithm above is covered by the 70-test suite —
+**Verification:** every algorithm above is covered by the 79-test suite —
 `python manage.py test tests`.

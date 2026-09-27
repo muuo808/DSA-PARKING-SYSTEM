@@ -115,7 +115,8 @@ smartpark/
 | `/display/` | Public slot map + counters for drivers, no login (auto-refresh 10s) |
 | `/accounts/login/` | Sign in |
 | `/admin/` | Django admin |
-| `/api/v1/` | API descriptor |
+| `/api/v1/` | API descriptor (public) |
+| `/api/v1/slots/`, `/vehicles/`, `/sessions/`, `/payments/` | Read-only JSON resources (staff login required) |
 | `:5000/api/calculate-fee` | Flask fee service |
 | `:5001/api/barrier/open` | Flask barrier service |
 
@@ -123,6 +124,7 @@ smartpark/
 
 | Document | Contents |
 | --- | --- |
+| `docs/CRITICAL_ANALYSIS.md` | **Critical reading of the client's ToR** — requirements table, the 10 ambiguities the brief leaves open and how each was resolved, requirement → module mapping, honest limitations |
 | `docs/USE_CASES.md` | Actors, 10 use cases (UC-01 … UC-10) with flows, each mapped to its module, code path and tests |
 | `docs/DESIGN.md` | **(a)** algorithm per module · **(b)** data structures + why each was chosen · **(c)** dynamic database design (ER, integrity guarantees, runtime evolution) |
 | `docs/ARCHITECTURE.md` | Stack, database schema + ER diagram, **algorithms** (fee brackets, slot allocation, plate normalisation, atomic exit), REST standards, security, module status |
@@ -133,13 +135,25 @@ smartpark/
 python manage.py test tests
 ```
 
-70 tests covering: fee calculation (all 5 charge brackets + boundaries),
+Zero-config and offline: even when `.env` points at Supabase, the suite runs
+against an in-memory SQLite test database (about 2½ minutes), so it can never
+write to the live data and a fresh clone needs no database account.
+
+To run the same suite against PostgreSQL instead — which also exercises the
+pooler-safe teardown in `tests/runner.py` — opt in explicitly:
+
+```bash
+TEST_USE_POSTGRES=1 python manage.py test tests   # needs a role with CREATEDB
+```
+
+79 tests covering: fee calculation (all 5 charge brackets + boundaries),
 plate normalisation, slot allocation, occupancy counts, vehicle/session rules,
 payment status, role flags, password hashing, barrier simulation, the Flask
 HTTP contracts, full entry -> exit -> payment lifecycle flows, report
 aggregations (revenue/occupancy KPIs), the CSV session export, RBAC on the
-reports screens, the 7-day dashboard trend series and the public display
-(anonymous access, slot map states, order, counts, auto refresh).
+reports screens, the 7-day dashboard trend series, the public display
+(anonymous access, slot map states, order, counts, auto refresh) and the
+`/api/v1/` JSON resources (descriptor discovery, auth, payload shape).
 
 ## Database
 
@@ -154,6 +168,7 @@ offline.
 > `aws-N-<region>.pooler.supabase.com:5432` instead (Settings → Database →
 > Connection pooler → Session). That is what `.env` uses.
 
-Schema: `python manage.py migrate` (applied). Tests create/drop their own
-`test_postgres` database on the same server, so the suite needs a role with
-`CREATEDB` (the `postgres` role qualifies).
+Schema: `python manage.py migrate` (applied). Tests default to an in-memory
+SQLite database (no server needed); with `TEST_USE_POSTGRES=1` they
+create/drop their own `test_postgres` database on the same server, so that
+path needs a role with `CREATEDB` (the `postgres` role qualifies).

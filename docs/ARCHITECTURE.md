@@ -185,12 +185,16 @@ occupancy history can never be orphaned by a cascade delete.
 All endpoints are versioned under `/api/v1/`:
 
 ```
-GET  /api/v1/           service descriptor (implemented)
-GET  /api/v1/slots      (Module 2/3)
-GET  /api/v1/vehicles   (Module 3)
-GET  /api/v1/sessions   (Module 4)
-GET  /api/v1/payments   (Module 6)
+GET  /api/v1/            service descriptor (public)
+GET  /api/v1/slots/      slots + live counts          (Module 2/3)
+GET  /api/v1/vehicles/   registered vehicles          (Module 3)
+GET  /api/v1/sessions/   entry/exit sessions, ?status= (Module 4)
+GET  /api/v1/payments/   payment records              (Module 6)
 ```
+
+The four data endpoints require a signed-in staff session (302 to login
+otherwise) and are strictly read-only (405 on POST): plates and revenue are
+operational data, so the anonymous surface stays limited to `/display`.
 
 Microservice endpoints (Flask):
 
@@ -237,7 +241,7 @@ Stripe/Linear/Supabase idiom.
 | 10 Public availability display (`/display`) | ✅ done – counters + slot map, 10 s auto refresh, no login |
 | Supabase integration | ✅ done – Session pooler (IPv4), migrations applied, demo data seeded |
 | Docker | ✅ done – one image, three services (`docker/docker-compose.yml`) |
-| Tests (unit, Django↔Flask) | ✅ 70 passing (unit + live-service E2E lifecycle) |
+| Tests (unit, Django↔Flask) | ✅ 79 passing (unit + live-service E2E lifecycle) |
 
 Use cases and their module/code/test mapping → `USE_CASES.md`.
 Algorithms (fee brackets, slot allocation, plate normalisation, atomic exit)

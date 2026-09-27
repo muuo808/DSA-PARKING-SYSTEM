@@ -3,24 +3,24 @@
 {% block title %}Sign in{% endblock %}
 
 {% block anonymous %}
-<div class="sp-auth-wrap">
-  <div class="sp-auth-card">
-    <div class="sp-brand" style="border-bottom:0; margin-bottom:1.25rem; padding:0;">
-      <span class="sp-brand-mark">SP</span>
+<div class="ap-auth-wrap">
+  <div class="ap-auth-card">
+    <div class="ap-brand" style="border-bottom:0; margin-bottom:1.25rem; padding:0;">
+      <span class="ap-brand-mark">AP</span>
       <span>
-        <span class="sp-brand-name">SmartPark Kenya</span>
-        <span class="sp-brand-sub">Parking Management System</span>
+        <span class="ap-brand-name">AUTO-PARK</span>
+        <span class="ap-brand-sub">Parking Management System</span>
       </span>
     </div>
 
     {% if form.errors %}
-      <div class="sp-alert sp-alert-error" role="alert">
+      <div class="ap-alert ap-alert-error" role="alert">
         Invalid username or password. Please try again.
       </div>
     {% endif %}
 
     {% if next and user.is_authenticated %}
-      <div class="sp-alert sp-alert-error" role="alert">
+      <div class="ap-alert ap-alert-error" role="alert">
         Your account does not have access to this page.
       </div>
     {% endif %}

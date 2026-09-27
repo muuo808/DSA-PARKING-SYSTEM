@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Start every SmartPark Kenya service:
+# Start every AUTO-PARK service:
 #   Django core app   -> http://127.0.0.1:8000
 #   Flask fee service -> http://127.0.0.1:5000   (Module 5)
 #   Flask barrier     -> http://127.0.0.1:5001   (Module 7)
@@ -20,7 +20,7 @@ fi
 PIDS=()
 cleanup() {
   echo ""
-  echo "Stopping SmartPark services..."
+  echo "Stopping AUTO-PARK services..."
   for pid in "${PIDS[@]}"; do kill "$pid" 2>/dev/null || true; done
 }
 trap cleanup EXIT INT TERM
@@ -40,7 +40,7 @@ PIDS+=($!)
 sleep 2
 cat <<'EOF'
 
-  SmartPark Kenya is running:
+  AUTO-PARK is running:
     Site + admin : http://127.0.0.1:8000
     Public display (Module 10): http://127.0.0.1:8000/display
     Fee service  : http://127.0.0.1:5000/api/calculate-fee

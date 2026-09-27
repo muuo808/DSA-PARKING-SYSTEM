@@ -1,4 +1,4 @@
-# SmartPark Kenya — Docker
+# AUTO-PARK — Docker
 
 One image, three containers (mirrors `run_dev.sh`):
 

@@ -3,59 +3,59 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}{{ page_title|default:"SmartPark Kenya" }}{% endblock %} · SmartPark Kenya</title>
+  <title>{% block title %}{{ page_title|default:"AUTO-PARK" }}{% endblock %} · AUTO-PARK</title>
   <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
-  <link rel="stylesheet" href="{% static 'css/smartpark.css' %}">
+  <link rel="stylesheet" href="{% static 'css/autopark.css' %}">
   {% block extra_head %}{% endblock %}
 </head>
 <body>
 {% if user.is_authenticated %}
-<div class="sp-shell">
+<div class="ap-shell">
 
   <!-- Sidebar -->
-  <aside class="sp-sidebar">
-    <div class="sp-brand">
-      <span class="sp-brand-mark">SP</span>
+  <aside class="ap-sidebar">
+    <div class="ap-brand">
+      <span class="ap-brand-mark">AP</span>
       <span>
-        <span class="sp-brand-name">SmartPark Kenya</span>
-        <span class="sp-brand-sub">Parking Management</span>
+        <span class="ap-brand-name">AUTO-PARK</span>
+        <span class="ap-brand-sub">Parking Management</span>
       </span>
     </div>
 
-    <nav class="sp-nav">
-      <div class="sp-nav-section">Operations</div>
-      <a class="sp-nav-link{% if request.resolver_match.app_name == 'dashboard' %} active{% endif %}"
+    <nav class="ap-nav">
+      <div class="ap-nav-section">Operations</div>
+      <a class="ap-nav-link{% if request.resolver_match.app_name == 'dashboard' %} active{% endif %}"
          href="{% url 'dashboard:home' %}">Dashboard</a>
-      <a class="sp-nav-link{% if request.resolver_match.url_name == 'entry' %} active{% endif %}"
+      <a class="ap-nav-link{% if request.resolver_match.url_name == 'entry' %} active{% endif %}"
          href="{% url 'parking:entry' %}">Vehicle Entry</a>
-      <a class="sp-nav-link{% if request.resolver_match.url_name == 'exit' %} active{% endif %}"
+      <a class="ap-nav-link{% if request.resolver_match.url_name == 'exit' %} active{% endif %}"
          href="{% url 'parking:exit' %}">Vehicle Exit</a>
-      <a class="sp-nav-link{% if request.resolver_match.url_name == 'slot_list' %} active{% endif %}"
+      <a class="ap-nav-link{% if request.resolver_match.url_name == 'slot_list' %} active{% endif %}"
          href="{% url 'parking:slot_list' %}">Parking Slots</a>
 
       {% if user.is_admin_role %}
-      <div class="sp-nav-section">Administration</div>
-      <a class="sp-nav-link{% if request.resolver_match.app_name == 'reports' %} active{% endif %}"
+      <div class="ap-nav-section">Administration</div>
+      <a class="ap-nav-link{% if request.resolver_match.app_name == 'reports' %} active{% endif %}"
          href="{% url 'reports:index' %}">Reports</a>
-      <a class="sp-nav-link" href="{% url 'admin:index' %}">Django Admin</a>
+      <a class="ap-nav-link" href="{% url 'admin:index' %}">Django Admin</a>
       {% endif %}
     </nav>
   </aside>
 
   <!-- Main column -->
-  <div class="sp-main">
-    <header class="sp-topbar">
+  <div class="ap-main">
+    <header class="ap-topbar">
       <div>
-        <h1 class="sp-page-title">{% block page_title %}{{ page_title|default:"SmartPark Kenya" }}{% endblock %}</h1>
-        {% block page_subtitle %}<p class="sp-page-sub">{% block subtitle %}{% endblock %}</p>{% endblock %}
+        <h1 class="ap-page-title">{% block page_title %}{{ page_title|default:"AUTO-PARK" }}{% endblock %}</h1>
+        {% block page_subtitle %}<p class="ap-page-sub">{% block subtitle %}{% endblock %}</p>{% endblock %}
       </div>
 
-      <div class="sp-user">
+      <div class="ap-user">
         <div class="text-end d-none d-sm-block">
-          <div class="sp-user-name">{{ user.get_full_name|default:user.username }}</div>
-          <div class="sp-user-role">{{ user.get_role_display }}</div>
+          <div class="ap-user-name">{{ user.get_full_name|default:user.username }}</div>
+          <div class="ap-user-role">{{ user.get_role_display }}</div>
         </div>
-        <span class="sp-avatar" aria-hidden="true">{{ user.username|slice:":2"|upper }}</span>
+        <span class="ap-avatar" aria-hidden="true">{{ user.username|slice:":2"|upper }}</span>
         <form method="post" action="{% url 'accounts:logout' %}" class="m-0">
           {% csrf_token %}
           <button type="submit" class="btn btn-outline-secondary btn-sm">Log out</button>
@@ -63,10 +63,10 @@
       </div>
     </header>
 
-    <main class="sp-content">
+    <main class="ap-content">
       {% if messages %}
         {% for message in messages %}
-          <div class="sp-alert sp-alert-{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% else %}info{% endif %}"
+          <div class="ap-alert ap-alert-{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% else %}info{% endif %}"
                role="alert">{{ message }}</div>
         {% endfor %}
       {% endif %}

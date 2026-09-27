@@ -1,4 +1,4 @@
-"""User accounts and role management for SmartPark Kenya."""
+"""User accounts and role management for AUTO-PARK."""
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -13,7 +13,7 @@ class UserRole(models.TextChoices):
 
 class User(AbstractUser):
     """
-    SmartPark user.
+    AUTO-PARK user.
 
     Extends Django's AbstractUser so passwords are stored hashed (never
     plain text) while adding the role field required for role-based access

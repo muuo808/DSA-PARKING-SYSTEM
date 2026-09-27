@@ -1,4 +1,4 @@
-# SmartPark Kenya – Architecture
+# AUTO-PARK – Architecture
 
 ## Stack
 
@@ -219,7 +219,7 @@ GET  /api/barrier/status  → simulated hardware state
 Brand: `#1565C0` primary · `#0D47A1` secondary · `#FFFFFF` / `#F5F7FA` /
 `#E5E7EB` / `#1F2937` neutrals.
 
-Rules enforced in `static/css/smartpark.css` and verified by test: **no color
+Rules enforced in `static/css/autopark.css` and verified by test: **no color
 gradients, no neon, no glassmorphism, no excessive shadows, no flashy
 animation** (transitions disabled under `prefers-reduced-motion`). Flat
 modern cards with a 1px border and a soft 2px-equivalent shadow, in the

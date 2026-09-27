@@ -29,7 +29,7 @@ def api_root(request: HttpRequest) -> JsonResponse:
     """Service descriptor so clients can discover available resources."""
     return JsonResponse(
         {
-            "service": "smartpark-api",
+            "service": "autopark-api",
             "version": "v1",
             "resources": [
                 {"path": "/api/v1/slots/", "description": "Parking slots + live counts"},

@@ -1,4 +1,4 @@
-# SmartPark Kenya – Use Cases
+# AUTO-PARK – Use Cases
 
 Actors, use cases and the module / code / test each one maps to. This is the
 traceability sheet for the brief: *"Using the identified Use Cases, modules,

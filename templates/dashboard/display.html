@@ -5,26 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Public display: auto refresh every {{ refresh_seconds }} seconds (Module 10) -->
   <meta http-equiv="refresh" content="{{ refresh_seconds }}">
-  <title>SmartPark Kenya – Live Availability</title>
+  <title>AUTO-PARK – Live Availability</title>
   {% load static %}
   <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
-  <link rel="stylesheet" href="{% static 'css/smartpark.css' %}">
+  <link rel="stylesheet" href="{% static 'css/autopark.css' %}">
 </head>
 <body>
   <div class="display-screen">
-    <h1 class="display-title">SMARTPARK KENYA</h1>
+    <h1 class="display-title">AUTO-PARK</h1>
 
     <div class="display-grid">
       <div>
-        <div class="display-number" style="color:var(--sp-ink);">{{ stats.total_slots }}</div>
+        <div class="display-number" style="color:var(--ap-ink);">{{ stats.total_slots }}</div>
         <div class="display-label">Total Slots</div>
       </div>
       <div>
-        <div class="display-number" style="color:var(--sp-secondary);">{{ stats.occupied }}</div>
+        <div class="display-number" style="color:var(--ap-secondary);">{{ stats.occupied }}</div>
         <div class="display-label">Occupied</div>
       </div>
       <div>
-        <div class="display-number" style="color:var(--sp-primary);">{{ stats.available }}</div>
+        <div class="display-number" style="color:var(--ap-primary);">{{ stats.available }}</div>
         <div class="display-label">Available</div>
       </div>
     </div>
@@ -54,7 +54,7 @@
       <span class="legend-chip"><i class="legend-dot is-out_of_service"></i>Closed</span>
     </div>
 
-    <p class="mt-5 mb-0" style="color:var(--sp-muted); font-size:1rem; letter-spacing:0.08em;">
+    <p class="mt-5 mb-0" style="color:var(--ap-muted); font-size:1rem; letter-spacing:0.08em;">
       REFRESHES EVERY {{ refresh_seconds }} SECONDS
     </p>
   </div>

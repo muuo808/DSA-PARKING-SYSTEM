@@ -1,5 +1,5 @@
 """
-SmartPark Kenya – Django settings.
+AUTO-PARK – Django settings.
 
 Configuration is environment-driven so the database can move from the local
 development placeholder to Supabase PostgreSQL by changing DATABASE_URL only.
@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # SmartPark Kenya applications
+    # AUTO-PARK applications
     "django_app.accounts",
     "django_app.parking",
     "django_app.payments",
@@ -84,7 +84,7 @@ WSGI_APPLICATION = "django_app.wsgi.application"
 # Single source of truth is Supabase PostgreSQL (spec: Database section).
 # DATABASE_URL examples:
 #   Supabase : postgresql://postgres.xxxx:password@aws-0.xx.pooler.supabase.com:5432/postgres?sslmode=require
-#   Local    : postgresql://user:password@127.0.0.1:5432/smartpark
+#   Local    : postgresql://user:password@127.0.0.1:5432/autopark
 # Falls back to SQLite only for first-run bootstrap before credentials exist.
 DATABASE_URL = os.environ.get("DATABASE_URL", "").strip()
 
@@ -174,7 +174,7 @@ LOGOUT_REDIRECT_URL = "accounts:login"
 
 # Email backend for password reset during development (prints to console)
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-DEFAULT_FROM_EMAIL = "noreply@smartpark.co.ke"
+DEFAULT_FROM_EMAIL = "noreply@autopark.co.ke"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

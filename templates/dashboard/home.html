@@ -4,7 +4,7 @@
 {% block subtitle %}Live overview of the car park · {{ "now"|date:"D j F Y" }}{% endblock %}
 
 {% block content %}
-<div class="sp-stats mb-4">
+<div class="ap-stats mb-4">
   <div class="stat-card">
     <div class="stat-label">Total Slots</div>
     <div class="stat-value">{{ stats.total_slots }}</div>
@@ -37,25 +37,25 @@
   </div>
 </div>
 
-<div class="sp-card">
-  <p class="sp-card-title">Quick actions</p>
+<div class="ap-card">
+  <p class="ap-card-title">Quick actions</p>
   <div class="d-flex flex-wrap gap-2">
     <a class="btn btn-primary" href="{% url 'parking:entry' %}">Register entry</a>
     <a class="btn btn-primary" href="{% url 'parking:exit' %}">Register exit</a>
     <a class="btn btn-outline-secondary" href="{% url 'parking:slot_list' %}">Manage parking slots</a>
     <a class="btn btn-outline-secondary" href="/admin/">Open admin panel</a>
   </div>
-  <p class="mb-0 mt-3" style="font-size:0.8125rem; color:var(--sp-muted);">
+  <p class="mb-0 mt-3" style="font-size:0.8125rem; color:var(--ap-muted);">
     Trends update on every page load{% if user.is_admin_role %} · detailed analytics live in
     <a href="{% url 'reports:index' %}">Reports</a>{% endif %}.
   </p>
 </div>
 
 <!-- Module 8: 7-day trend chart -->
-<div class="sp-card mt-4">
+<div class="ap-card mt-4">
   <div class="d-flex justify-content-between align-items-center">
-    <p class="sp-card-title m-0">Last 7 days</p>
-    <span style="font-size:0.75rem; color:var(--sp-muted);">entries · exits · revenue</span>
+    <p class="ap-card-title m-0">Last 7 days</p>
+    <span style="font-size:0.75rem; color:var(--ap-muted);">entries · exits · revenue</span>
   </div>
   <canvas id="trendChart" height="110"></canvas>
 </div>
@@ -68,7 +68,7 @@
   (function () {
     const data = JSON.parse(document.getElementById("trend-data").textContent);
     const css = getComputedStyle(document.documentElement);
-    const primary = css.getPropertyValue("--sp-primary").trim() || "#1565C0";
+    const primary = css.getPropertyValue("--ap-primary").trim() || "#1565C0";
 
     new Chart(document.getElementById("trendChart"), {
       type: "bar",

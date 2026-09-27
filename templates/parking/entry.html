@@ -4,10 +4,10 @@
 
 {% block content %}
 <!-- Availability shown BEFORE entry (Module 3 workflow step 2) -->
-<div class="sp-stats mb-4">
+<div class="ap-stats mb-4">
   <div class="stat-card">
     <div class="stat-label">Available</div>
-    <div class="stat-value" style="color:var(--sp-primary);">{{ stats.available }}</div>
+    <div class="stat-value" style="color:var(--ap-primary);">{{ stats.available }}</div>
     <div class="stat-note">of {{ stats.total_slots }} slots</div>
   </div>
   <div class="stat-card">
@@ -25,8 +25,8 @@
 <div class="row g-4">
   <!-- Entry form -->
   <div class="col-lg-5">
-    <div class="sp-card">
-      <p class="sp-card-title">Register vehicle arrival</p>
+    <div class="ap-card">
+      <p class="ap-card-title">Register vehicle arrival</p>
 
       <form method="post" action="{% url 'parking:entry' %}">
         {% csrf_token %}
@@ -51,7 +51,7 @@
         </button>
       </form>
 
-      <p class="mb-0 mt-3" style="font-size:0.75rem; color:var(--sp-muted);">
+      <p class="mb-0 mt-3" style="font-size:0.75rem; color:var(--ap-muted);">
         Allocates the lowest available slot, records the session, then sends
         <code>OPEN</code> to the barrier service.
       </p>
@@ -60,9 +60,9 @@
 
   <!-- Recent entries -->
   <div class="col-lg-7">
-    <div class="sp-card p-0">
-      <div class="px-3 py-2" style="border-bottom:1px solid var(--sp-border);">
-        <p class="sp-card-title m-0">Entries today</p>
+    <div class="ap-card p-0">
+      <div class="px-3 py-2" style="border-bottom:1px solid var(--ap-border);">
+        <p class="ap-card-title m-0">Entries today</p>
       </div>
       <div class="table-responsive">
         <table class="table">
@@ -78,10 +78,10 @@
           <tbody>
             {% for session in recent_entries %}
             <tr>
-              <td><strong class="sp-tnum">{{ session.vehicle.plate_number }}</strong></td>
+              <td><strong class="ap-tnum">{{ session.vehicle.plate_number }}</strong></td>
               <td>{{ session.vehicle.get_vehicle_type_display }}</td>
               <td>{{ session.slot.slot_number }}</td>
-              <td class="sp-tnum">{{ session.entry_time|date:"H:i" }}</td>
+              <td class="ap-tnum">{{ session.entry_time|date:"H:i" }}</td>
               <td>
                 {% if session.status == 'ACTIVE' %}
                   <span class="badge" style="background:#DBEAFE; color:#1E40AF;">Parked</span>
@@ -92,7 +92,7 @@
             </tr>
             {% empty %}
             <tr>
-              <td colspan="5" style="text-align:center; padding:2rem; color:var(--sp-muted);">
+              <td colspan="5" style="text-align:center; padding:2rem; color:var(--ap-muted);">
                 No vehicles recorded today yet.
               </td>
             </tr>

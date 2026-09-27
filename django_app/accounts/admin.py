@@ -13,8 +13,8 @@ class UserAdmin(DjangoUserAdmin):
     list_display = ("username", "email", "role", "is_active", "created_at")
     list_filter = ("role", "is_active", "is_staff")
     fieldsets = DjangoUserAdmin.fieldsets + (
-        ("SmartPark", {"fields": ("role",)}),
+        ("AUTO-PARK", {"fields": ("role",)}),
     )
     add_fieldsets = DjangoUserAdmin.add_fieldsets + (
-        ("SmartPark", {"fields": ("role",)}),
+        ("AUTO-PARK", {"fields": ("role",)}),
     )

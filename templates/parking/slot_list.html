@@ -4,7 +4,7 @@
 
 {% block content %}
 <!-- Occupancy summary -->
-<div class="sp-stats mb-4">
+<div class="ap-stats mb-4">
   <div class="stat-card">
     <div class="stat-label">Total Slots</div>
     <div class="stat-value">{{ stats.total_slots }}</div>
@@ -25,8 +25,8 @@
 
 {% if can_manage %}
 <!-- Create slot (admin only) -->
-<div class="sp-card mb-4">
-  <p class="sp-card-title">Create parking slot</p>
+<div class="ap-card mb-4">
+  <p class="ap-card-title">Create parking slot</p>
   <form method="post" action="{% url 'parking:slot_create' %}" class="row g-2 align-items-end">
     {% csrf_token %}
     <div class="col-12 col-sm-4 col-lg-3">
@@ -48,10 +48,10 @@
 {% endif %}
 
 <!-- Slot table -->
-<div class="sp-card p-0">
-  <div class="d-flex justify-content-between align-items-center px-3 py-2" style="border-bottom:1px solid var(--sp-border);">
-    <p class="sp-card-title m-0">All slots</p>
-    <span style="font-size:0.75rem; color:var(--sp-muted);">Refreshes on page load</span>
+<div class="ap-card p-0">
+  <div class="d-flex justify-content-between align-items-center px-3 py-2" style="border-bottom:1px solid var(--ap-border);">
+    <p class="ap-card-title m-0">All slots</p>
+    <span style="font-size:0.75rem; color:var(--ap-muted);">Refreshes on page load</span>
   </div>
 
   <div class="table-responsive">
@@ -82,8 +82,8 @@
           <td>
             {% with active=slot.sessions|slice:":1" %}
               {% if slot.status == 'OCCUPIED' and active %}
-                <span class="sp-tnum">{{ active.0.vehicle.plate_number }}</span>
-                <span style="font-size:0.75rem; color:var(--sp-muted);">· since {{ active.0.entry_time|date:"H:i" }}</span>
+                <span class="ap-tnum">{{ active.0.vehicle.plate_number }}</span>
+                <span style="font-size:0.75rem; color:var(--ap-muted);">· since {{ active.0.entry_time|date:"H:i" }}</span>
               {% else %}—{% endif %}
             {% endwith %}
           </td>
@@ -104,7 +104,7 @@
         </tr>
         {% empty %}
         <tr>
-          <td colspan="4" style="text-align:center; padding:2rem; color:var(--sp-muted);">
+          <td colspan="4" style="text-align:center; padding:2rem; color:var(--ap-muted);">
             No parking slots yet.
             {% if can_manage %}Create the first one above.{% else %}Ask an admin to create some.{% endif %}
           </td>

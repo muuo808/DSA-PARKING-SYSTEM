@@ -5,7 +5,7 @@
 
 {% block content %}
 <!-- KPI cards -->
-<div class="sp-stats mb-4">
+<div class="ap-stats mb-4">
   <div class="stat-card">
     <div class="stat-label">Revenue (all time)</div>
     <div class="stat-value is-money">{{ figures.revenue_total|floatformat:0 }}</div>
@@ -46,10 +46,10 @@
 <div class="row g-4 mb-4">
   <!-- Revenue trend -->
   <div class="col-12 col-lg-8">
-    <div class="sp-card h-100">
+    <div class="ap-card h-100">
       <div class="d-flex justify-content-between align-items-center">
-        <p class="sp-card-title m-0">Revenue — last 14 days</p>
-        <span style="font-size:0.75rem; color:var(--sp-muted);">KES per day</span>
+        <p class="ap-card-title m-0">Revenue — last 14 days</p>
+        <span style="font-size:0.75rem; color:var(--ap-muted);">KES per day</span>
       </div>
       <canvas id="revenueTrend" height="120"></canvas>
     </div>
@@ -57,8 +57,8 @@
 
   <!-- Revenue by method -->
   <div class="col-12 col-lg-4">
-    <div class="sp-card h-100">
-      <p class="sp-card-title">By payment method</p>
+    <div class="ap-card h-100">
+      <p class="ap-card-title">By payment method</p>
       {% if methods %}
       <canvas id="methodSplit" height="160"></canvas>
       <table class="table mt-2 mb-0">
@@ -73,7 +73,7 @@
         </tbody>
       </table>
       {% else %}
-      <p class="mb-0" style="font-size:0.8125rem; color:var(--sp-muted);">No settled payments yet.</p>
+      <p class="mb-0" style="font-size:0.8125rem; color:var(--ap-muted);">No settled payments yet.</p>
       {% endif %}
     </div>
   </div>
@@ -82,29 +82,29 @@
 <div class="row g-4 mb-4">
   <!-- Occupancy breakdown -->
   <div class="col-12 col-md-5 col-lg-4">
-    <div class="sp-card h-100">
-      <p class="sp-card-title">Slot occupancy</p>
+    <div class="ap-card h-100">
+      <p class="ap-card-title">Slot occupancy</p>
       {% for row in occupancy %}
       <div class="mb-2">
         <div class="d-flex justify-content-between" style="font-size:0.8125rem;">
           <span>{{ row.label }}</span>
           <span><strong>{{ row.count }}</strong> · {{ row.percent }}%</span>
         </div>
-        <div style="height:6px; background:var(--sp-border); border-radius:3px; overflow:hidden;">
-          <div style="height:100%; width:{{ row.percent }}%; background:var(--sp-primary);"></div>
+        <div style="height:6px; background:var(--ap-border); border-radius:3px; overflow:hidden;">
+          <div style="height:100%; width:{{ row.percent }}%; background:var(--ap-primary);"></div>
         </div>
       </div>
       {% empty %}
-      <p class="mb-0" style="font-size:0.8125rem; color:var(--sp-muted);">No slots registered yet.</p>
+      <p class="mb-0" style="font-size:0.8125rem; color:var(--ap-muted);">No slots registered yet.</p>
       {% endfor %}
     </div>
   </div>
 
   <!-- Session ledger -->
   <div class="col-12 col-md-7 col-lg-8">
-    <div class="sp-card h-100 p-0">
-      <div class="d-flex justify-content-between align-items-center px-3 py-2" style="border-bottom:1px solid var(--sp-border);">
-        <p class="sp-card-title m-0">Recent sessions</p>
+    <div class="ap-card h-100 p-0">
+      <div class="d-flex justify-content-between align-items-center px-3 py-2" style="border-bottom:1px solid var(--ap-border);">
+        <p class="ap-card-title m-0">Recent sessions</p>
         <a class="btn btn-outline-secondary btn-sm" href="{% url 'reports:export' %}">Export CSV</a>
       </div>
       <div class="table-responsive">
@@ -140,7 +140,7 @@
               </td>
             </tr>
             {% empty %}
-            <tr><td colspan="7" style="text-align:center; color:var(--sp-muted);">No sessions recorded yet.</td></tr>
+            <tr><td colspan="7" style="text-align:center; color:var(--ap-muted);">No sessions recorded yet.</td></tr>
             {% endfor %}
           </tbody>
         </table>
@@ -158,7 +158,7 @@
   (function () {
     const series = JSON.parse(document.getElementById("revenue-series").textContent);
     const methods = JSON.parse(document.getElementById("method-split").textContent);
-    const brand = getComputedStyle(document.documentElement).getPropertyValue("--sp-primary").trim() || "#1565C0";
+    const brand = getComputedStyle(document.documentElement).getPropertyValue("--ap-primary").trim() || "#1565C0";
 
     new Chart(document.getElementById("revenueTrend"), {
       type: "bar",

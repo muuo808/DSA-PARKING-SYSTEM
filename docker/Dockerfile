@@ -1,4 +1,4 @@
-# SmartPark Kenya — single image for all three services.
+# AUTO-PARK — single image for all three services.
 #
 #   web     -> python manage.py runserver 0.0.0.0:8000
 #   fee     -> python flask_services/fee_service/app.py

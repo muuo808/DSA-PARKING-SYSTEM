@@ -1,5 +1,5 @@
 """
-SmartPark Kenya – root URL configuration.
+AUTO-PARK – root URL configuration.
 
 API endpoints live under /api/v1/ (see django_app/api/).
 """

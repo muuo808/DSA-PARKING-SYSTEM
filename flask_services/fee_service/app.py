@@ -1,5 +1,5 @@
 """
-SmartPark Kenya – Parking Fee Calculation Service (Flask microservice).
+AUTO-PARK – Parking Fee Calculation Service (Flask microservice).
 
 Endpoint required by Module 5:
 

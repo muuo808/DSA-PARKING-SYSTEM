@@ -1,4 +1,4 @@
-# SmartPark Kenya — Algorithms, Data Structures & Dynamic Database Design
+# AUTO-PARK — Algorithms, Data Structures & Dynamic Database Design
 
 - **(a)** An algorithm for each of the 10 modules, written as pseudocode that matches the shipped code
 - **(b)** The data structures used and *why each one was chosen*

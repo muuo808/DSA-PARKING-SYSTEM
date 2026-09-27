@@ -1,11 +1,11 @@
-# SmartPark Kenya — three services, one image.
+# AUTO-PARK — three services, one image.
 #
 #   docker compose -f docker/docker-compose.yml up --build
 #
 # Then:  site http://127.0.0.1:8000 · fee :5000 · barrier :5001
 # DATABASE_URL (Supabase) and secrets are read from the project .env file.
 
-name: smartpark
+name: autopark
 
 services:
   web:

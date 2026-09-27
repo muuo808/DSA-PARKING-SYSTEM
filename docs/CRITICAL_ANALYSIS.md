@@ -1,4 +1,4 @@
-# SmartPark Kenya — Critical Analysis of the Client's Terms of Reference
+# AUTO-PARK — Critical Analysis of the Client's Terms of Reference
 
 This sheet turns the client's brief into explicit requirements, records every
 ambiguity found in it and how we resolved it, and shows which module was
@@ -18,7 +18,7 @@ the design: `USE_CASES.md` (use cases) → `DESIGN.md` (a/b/c) →
 | **R4** | On exit it **automatically calculates the amount to pay** | Fee service returns the bracket fee from the brief's table |
 | **R5** | **The barrier opens on payment** of the parking fees | Barrier `open` command is issued only after the payment transaction commits |
 | **R6** | Charge table: ≤30 min free · ≤2 h KES 50 · ≤4 h KES 100 · ≤6 h KES 300 · >6 h KES 500 | All five brackets *and* every boundary minute asserted in `tests/test_fee_service.py` |
-| **R7** | **Web-based**, well-commented system in C++/Java/Python, given an appropriate name | Django + Flask in Python, docstrings/comments throughout, "SmartPark Kenya" |
+| **R7** | **Web-based**, well-commented system in C++/Java/Python, given an appropriate name | Django + Flask in Python, docstrings/comments throughout, "AUTO-PARK" |
 | **R8** | (a) algorithm per module · (b) data structures + reasons · (c) dynamic database | `DESIGN.md` parts (a), (b), (c) |
 
 ---

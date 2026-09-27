@@ -23,7 +23,7 @@ class ApiDescriptorTests(TestCase):
 
     def test_descriptor_lists_only_live_endpoints(self):
         payload = self.client.get(reverse("api:root")).json()
-        self.assertEqual(payload["service"], "smartpark-api")
+        self.assertEqual(payload["service"], "autopark-api")
         for resource in payload["resources"]:
             response = self.client.get(resource["path"])
             # 200 for a staff session, 302 to login for anyone else - never 404.

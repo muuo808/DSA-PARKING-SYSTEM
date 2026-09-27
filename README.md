@@ -1,4 +1,4 @@
-# SmartPark Kenya
+# AUTO-PARK
 
 Modern web-based parking management system built with **Django** (core
 business system) and **Flask** (fee + barrier microservices), backed by
@@ -63,7 +63,7 @@ Created by `python manage.py seed_demo` (run it again with
 ## Project structure
 
 ```
-smartpark/
+autopark/
 ├── manage.py
 ├── django_app/                 # Django project + applications
 │   ├── settings.py             # env-driven config (DATABASE_URL, secrets)
@@ -78,7 +78,7 @@ smartpark/
 │   ├── fee_service/            # Module 5: POST /api/calculate-fee
 │   └── barrier_service/        # Module 7: /api/barrier/open|close|status
 ├── templates/                  # Django templates (Bootstrap 5)
-├── static/css/smartpark.css    # Design system - flat UI, brand palette
+├── static/css/autopark.css    # Design system - flat UI, brand palette
 ├── static/vendor/              # Bootstrap 5, Chart.js (vendored, offline)
 ├── tests/                      # Unit tests (Django + Flask)
 ├── docs/                       # DESIGN.md, USE_CASES.md, ARCHITECTURE.md

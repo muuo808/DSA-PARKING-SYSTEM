@@ -1,5 +1,5 @@
 """
-SmartPark Kenya – Barrier Control Service (Flask microservice).
+AUTO-PARK – Barrier Control Service (Flask microservice).
 
 Module 7 endpoints (hardware simulated for now):
 
